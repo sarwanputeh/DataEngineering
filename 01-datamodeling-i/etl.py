@@ -6,14 +6,6 @@ from typing import List
 import psycopg2
 
 
-table_insert = """
-    INSERT INTO users (
-        xxx
-    ) VALUES (%s)
-    ON CONFLICT (xxx) DO NOTHING
-"""
-
-
 def get_files(filepath: str) -> List[str]:
     """
     Description: This function is responsible for listing the files in a directory
@@ -40,9 +32,53 @@ def process(cur, conn, filepath):
             data = json.loads(f.read())
             for each in data:
                 # Print some sample data
-                print(each["id"], each["type"], each["actor"]["login"])
+                
+                if each["type"] == "IssueCommentEvent":
+                    print(
+                        each["id"], 
+                        each["type"],
+                        each["actor"]["id"],
+                        each["actor"]["login"],
+                        each["repo"]["id"],
+                        each["repo"]["name"],
+                        each["created_at"],
+                        each["payload"]["issue"]["url"],
+                    )
+                else:
+                    print(
+                        each["id"], 
+                        each["type"],
+                        each["actor"]["id"],
+                        each["actor"]["login"],
+                        each["repo"]["id"],
+                        each["repo"]["name"],
+                        each["created_at"],
+                    )
 
                 # Insert data into tables here
+                insert_statement = f"""
+                    INSERT INTO actors (
+                        id,
+                        login
+                    ) VALUES ({each["actor"]["id"]}, '{each["actor"]["login"]}')
+                    ON CONFLICT (id) DO NOTHING
+                """
+                # print(insert_statement)
+                cur.execute(insert_statement)
+
+                # Insert data into tables here
+                insert_statement = f"""
+                    INSERT INTO events (
+                        id,
+                        type,
+                        actor_id
+                    ) VALUES ('{each["id"]}', '{each["type"]}', '{each["actor"]["id"]}')
+                    ON CONFLICT (id) DO NOTHING
+                """
+                # print(insert_statement)
+                cur.execute(insert_statement)
+
+                conn.commit()
 
 
 def main():
@@ -51,7 +87,7 @@ def main():
     )
     cur = conn.cursor()
 
-    process(cur, conn, filepath="../data")
+    process(cur, conn, filepath="/workspace/swu-ds525/data")
 
     conn.close()
 
