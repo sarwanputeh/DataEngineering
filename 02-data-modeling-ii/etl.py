@@ -1,31 +1,46 @@
+from cassandra.cluster import Cluster
 import glob
 import json
 import os
 from typing import List
 
-from cassandra.cluster import Cluster
+
+table_drop_total_events = "DROP TABLE IF EXISTS total_events"
+table_drop_users = "DROP TABLE IF EXISTS users"
 
 
-table_drop = "DROP TABLE events"
-
-table_create = """
-    CREATE TABLE IF NOT EXISTS events
+table_create_total_events = """
+    CREATE TABLE IF NOT EXISTS total_events
     (
-        id text,
         type text,
-        public boolean,
+        actor_login text,
+        actor_display_login text,
         PRIMARY KEY (
-            id,
+            actor_login,
             type
         )
     )
 """
 
+table_create_users = """
+    CREATE TABLE IF NOT EXISTS users
+    (
+        user text,
+        total int ,
+        PRIMARY KEY (
+            total,
+            user
+        )
+    )
+"""
+
 create_table_queries = [
-    table_create,
+    table_create_total_events,
+    table_create_users,
 ]
 drop_table_queries = [
-    table_drop,
+    table_drop_users,
+    table_drop_total_events,
 ]
 
 def drop_tables(session):
@@ -43,7 +58,6 @@ def create_tables(session):
         except Exception as e:
             print(e)
 
-
 def get_files(filepath: str) -> List[str]:
     """
     Description: This function is responsible for listing the files in a directory
@@ -60,26 +74,46 @@ def get_files(filepath: str) -> List[str]:
 
     return all_files
 
-
 def process(session, filepath):
     # Get list of files from filepath
     all_files = get_files(filepath)
 
+    # Insert data for UI
+    j = 0
     for datafile in all_files:
         with open(datafile, "r") as f:
             data = json.loads(f.read())
             for each in data:
-                # Print some sample data
-                print(each["id"], each["type"], each["actor"]["login"])
 
-                # Insert data into tables here
+                try:
+                    # Insert data into tables total_events
+                    query = f"""INSERT INTO total_events (type, actor_login, actor_display_login) VALUES ('{each["type"]}', '{each["actor"]["login"]}', '{each["actor"]["display_login"]}')"""
+                    session.execute(query)
+                    j = j+1
+                except:
+                    pass
+
+    print("Data inserted total " + str(j) + " records")
 
 
-def insert_sample_data(session):
-    query = f"""
-    INSERT INTO events (id, type, public) VALUES ('23487929637', 'IssueCommentEvent', true)
+def insert_data(session):
+
+    query_select = """
+    SELECT actor_login, COUNT (*)  AS user_count  FROM  total_events  GROUP BY  actor_login  
     """
-    session.execute(query)
+    try:
+        rows = session.execute(query_select)
+    except Exception as e:
+        print(e)
+
+    for row in rows:
+        try:
+            query_insert = f"""
+            INSERT INTO users (user, total) VALUES ('{row[0]}', {row[1]})
+            """
+            session.execute(query_insert)
+        except Exception as e:
+            print(e)
 
 
 def main():
@@ -106,20 +140,27 @@ def main():
     drop_tables(session)
     create_tables(session)
 
-    # process(session, filepath="../data")
-    insert_sample_data(session)
+    process(session, filepath="/workspace/swu-ds525/data")
+   
+    insert_data(session)
 
     # Select data in Cassandra and print them to stdout
     query = """
-    SELECT * from events WHERE id = '23487929637' AND type = 'IssueCommentEvent'
+    SELECT  user, total  from users  
     """
+
     try:
         rows = session.execute(query)
     except Exception as e:
         print(e)
 
-    for row in rows:
-        print(row)
+
+    i = 0
+    ls_data = list(rows)
+    for row in reversed(ls_data):
+        if (i < 10):
+            print(row)
+            i = i+1
 
 
 if __name__ == "__main__":
