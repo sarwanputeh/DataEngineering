@@ -57,7 +57,7 @@ def process(cur, conn, filepath):
 
                 # Insert data into tables here
                 insert_statement = f"""
-                    INSERT INTO events (
+                    INSERT INTO  Garage (
                          GarageID int
                         ,name txt
                         ,PhoneNumber txt
