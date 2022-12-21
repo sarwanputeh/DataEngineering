@@ -53,3 +53,4 @@ $ cat ~/.aws/credentials
 
 
 
+![wan22](https://user-images.githubusercontent.com/12684425/208849161-57faa62d-19b5-49a4-8387-7e1e04cf8cef.PNG)
