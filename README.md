@@ -36,12 +36,15 @@ $ cat ~/.aws/credentials
    -จากนั้นให้รันคำสั่งด้านล่างเพื่อ start Docke
    $ docker-compose up
    
+   
    4.datalake 
      -Transform ข้อมูล raw data ไปเป็น Cleaned data:
      -เข้าสู่ PySpark Notebook UI ด้วย port 8888 (localhost:8888)
      -Run PySpark Notebook "datalake_s3.ipynb"
      -Cleaned data จะถูกจัดเก็บบน S3 โดยมีการทำ partition
-    5.datawarehouse ในที่นี้ใช้ postgres  เนื่องจาก redshift ใช้ไม่ได้เนื่องจาก Account aws ผมใช้ redshift ไม่ได้จึงใช้ postres ในการ           tranform data ทำdata และ export  dataที่พร้อมใช้งาเพื่อจะไปทำ data visualization 
-    6.สร้าง Dashboard ด้วย Power BI:
+    
+   5.datawarehouse ในที่นี้ใช้ postgres  เนื่องจาก redshift ใช้ไม่ได้เนื่องจาก Account aws ผมใช้ redshift ไม่ได้จึงใช้ postres ในการ           tranform data ทำdata และ export  dataที่พร้อมใช้งาเพื่อจะไปทำ data visualization 
+   
+   6.สร้าง Dashboard ด้วย Power BI:
     สร้าง Dashboard เพื่อนำเสนอข้อมูลเพื่อตอบคำถามหรือแก้ไขปัญหา
     
