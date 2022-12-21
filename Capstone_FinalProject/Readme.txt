@@ -51,4 +51,5 @@ $ cat ~/.aws/credentials
   https://public.tableau.com/app/profile/sarwan.puteh/viz/Book1_16716020019610/Dashboard1?publish=yes
 
 
-![wan22](https://user-images.githubusercontent.com/12684425/208841599-15074dd6-cf87-4de4-8439-dbfc54a65006.PNG)
+
+
