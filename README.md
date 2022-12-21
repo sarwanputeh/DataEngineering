@@ -47,6 +47,7 @@ $ cat ~/.aws/credentials
    
    6.สร้าง Dashboard ด้วย Power BI:
     สร้าง Dashboard เพื่อนำเสนอข้อมูลเพื่อตอบคำถามหรือแก้ไขปัญหา
-    
+    คลิกลิงค์เพื่อดูในtableau
+  https://public.tableau.com/app/profile/sarwan.puteh/viz/Book1_16716020019610/Dashboard1?publish=yes
 
 ![21122022](https://user-images.githubusercontent.com/12684425/208823219-b41eea9d-b158-4fb7-9334-c87eb8183925.PNG)
