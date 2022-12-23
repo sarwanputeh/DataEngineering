@@ -1,0 +1,96 @@
+from typing import NewType
+import psycopg2
+
+PostgresCursor = NewType("PostgresCursor", psycopg2.extensions.cursor)
+PostgresConn = NewType("PostgresConn", psycopg2.extensions.connection)
+
+table_drop_customer = "DROP TABLE IF EXISTS events"
+table_drop_garage = "DROP TABLE IF EXISTS actors"
+
+table_create_customer = """
+    CREATE TABLE IF NOT EXISTS customer (
+        Cus_ID BIGINT NOT NULL
+      ,FullName txt NOT NULL
+      ,EmailAddress txt NOT NULL
+      ,Requested_Amount int NOT NULL
+      ,Age int NOT NULL
+      ,Applicant_State_Desc As State txt NOT NULL
+      ,Applicant_City_Desc As City txt NOT NULL
+      ,Employment_Type_Desc11 txt NOT NULL
+      ,Total_Work_Experience int NOT NULL
+      ,Product_Name1 txt NOT NULL
+      ,Loan_Term int NOT NULL
+      ,Cost_Of_Vehicle int NOT NULL
+      ,Insurance_Code  int NOT NULL
+      , PRIMARY KEY (Cus_ID )
+    );
+"""
+table_create_GarageID = """
+    CREATE TABLE IF NOT EXISTS garage (
+       GarageID BIGINT  NOT NULL
+      ,name txt NOT NULL
+      ,PhoneNumber txt NOT NULL
+      ,Address  txt NOT NULL
+       , PRIMARY KEY (GarageID )
+    );
+"""
+table_create_cailm = """
+    CREATE TABLE IF NOT EXISTS cailm (
+        cailm_id BIGINT NOT NULL,
+        cailm_Register txt NOT NULL,
+        cailm_Type txt NOT NULL,
+        cailm_level txt,
+        cailm_Comment txt NOT NULL,
+        cailm_cost txt NOT NULL,
+        staft_ID Int,
+        GarageId txt,
+        CusID int
+        PRIMARY KEY (cailm_id )
+    );
+"""
+
+
+
+drop_table_queries   = [table_create_customer , table_create_garage , table_create_cailm ]
+create_table_queries = [table_create_customer , table_create_garage , table_create_cailm ]
+
+
+def drop_tables(cur: PostgresCursor, conn: PostgresConn) -> None:
+    """
+    Drops each table using the queries in `drop_table_queries` list.
+    """
+    for query in drop_table_queries:
+        cur.execute(query)
+        conn.commit()
+
+def create_tables(cur: PostgresCursor, conn: PostgresConn) -> None:
+    """
+    Creates each table using the queries in `create_table_queries` list.
+    """
+    for query in create_table_queries:
+        cur.execute(query)
+        conn.commit()
+
+
+def main():
+    """
+    - Drops (if exists) and Creates the sparkify database.
+    - Establishes connection with the sparkify database and gets
+    cursor to it.
+    - Drops all the tables.
+    - Creates all tables needed.
+    - Finally, closes the connection.
+    """
+    conn = psycopg2.connect(
+        "host=127.0.0.1 dbname=postgres user=postgres password=postgres"
+    )
+    cur = conn.cursor()
+
+    drop_tables(cur, conn)
+    create_tables(cur, conn)
+
+    conn.close()
+
+
+if __name__ == "__main__":
+    main()
