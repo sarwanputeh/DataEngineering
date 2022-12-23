@@ -1,6 +1,10 @@
 # swu-ds525
 Capstone Project -Sarwan Puteh
 
+DataModel 
+https://dbdiagram.io/d/639d893199cb1f3b55a1f919
+
+
 ขั้นตอนการทำมีดังนี้
 1. เปลี่ยน Working Directory ไปยัง capstone-projectc :
     $ cd capstone-project
